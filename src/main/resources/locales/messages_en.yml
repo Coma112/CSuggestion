@@ -1,0 +1,16 @@
+messages:
+  help:
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+    - "&e/csuggestion reload &f- &7Reloads the plugin."
+    - "&e/csuggestion new &7(&csuggestion&7) &f- &7Creates a suggestion"
+    - "&e/csuggestion menu &f- &7Opens the suggestion menu."
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+  reload: "&c&lSUGGESTIONS &8| &aI have successfully reloaded the files!"
+  admin-message: "&c&lSUGGESTIONS &8| &2{player} &asuggested: &2{suggestion}"
+  successful-suggestion: "&c&lSUGGESTIONS &8| &aYou have successfully created a new suggestion!"
+  first-page: "&c&lSUGGESTIONS &8| &cYou are already on the first page!"
+  last-page: "&c&lSUGGESTIONS &8| &cYou are already on the last page!"

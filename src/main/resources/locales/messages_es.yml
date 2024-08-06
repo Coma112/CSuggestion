@@ -1,0 +1,17 @@
+# Created by: alexisdvv on Discord
+messages:
+  help:
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+    - "&e/csuggestion reload &f- &7Recarga el plugin."
+    - "&e/csuggestion new &7(&csuggestion&7) &f- &7Crea una sugerencia."
+    - "&e/csuggestion menu &f- &7Abre el menú de sugerencias."
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+  reload: "&c&lSUGGESTIONS &8| &aHas recargado los archivos con éxito."
+  admin-message: "&c&lSUGGESTIONS &8| &2{player} &aa sugerido: &2{suggestion}"
+  successful-suggestion: "&c&lSUGGESTIONS &8| &a¡Has creado correctamente una nueva sugerencia!"
+  first-page: "&c&lSUGGESTIONS &8| &c¡Ya está en la primera página!"
+  last-page: "&c&lSUGGESTIONS &8| &c¡Ya está en la última página!"

@@ -1,0 +1,7 @@
+name: CSuggestion
+version: '1.0.0'
+main: coma112.csuggestion.CSuggestion
+api-version: '1.18'
+authors:
+  - Coma112
+  - Vulcan Studio

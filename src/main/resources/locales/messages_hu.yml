@@ -1,0 +1,16 @@
+messages:
+  help:
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+    - "&e/csuggestion reload &f- &7Újratölti a bővítményt."
+    - "&e/csuggestion new &7(&cjavaslat&7) &f- &7Új javaslatot hoz létre."
+    - "&e/csuggestion menu &f- &7Megnyitja a javaslati menüt."
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+  reload: "&c&lSUGGESTIONS &8| &aA fájlok sikeresen újratöltve!"
+  admin-message: "&c&lSUGGESTIONS &8| &2{player} &ajavasolta: &2{suggestion}"
+  successful-suggestion: "&c&lSUGGESTIONS &8| &aSikeresen létrehoztál egy új javaslatot!"
+  first-page: "&c&lSUGGESTIONS &8| &cMár az első oldalon vagy!"
+  last-page: "&c&lSUGGESTIONS &8| &cMár az utolsó oldalon vagy!"

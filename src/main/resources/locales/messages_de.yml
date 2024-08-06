@@ -1,0 +1,16 @@
+messages:
+  help:
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+    - "&e/csuggestion reload &f- &7Lädt das Plugin neu."
+    - "&e/csuggestion new &7(&cvorschlag&7) &f- &7Erstellt einen neuen Vorschlag."
+    - "&e/csuggestion menu &f- &7Öffnet das Vorschlagsmenü."
+    - ""
+    - "&8&l━━━━━━━━━━━━━━━━━━━━━━━[━━&c&lCSUGGESTION&8&l━━]━━━━━━━━━━━━━━━━━━━━━━━"
+    - ""
+  reload: "&c&lSUGGESTIONS &8| &aIch habe die Dateien erfolgreich neu geladen!"
+  admin-message: "&c&lSUGGESTIONS &8| &2{player} &ahat vorgeschlagen: &2{suggestion}"
+  successful-suggestion: "&c&lSUGGESTIONS &8| &aDu hast erfolgreich einen neuen Vorschlag erstellt!"
+  first-page: "&c&lSUGGESTIONS &8| &cDu bist bereits auf der ersten Seite!"
+  last-page: "&c&lSUGGESTIONS &8| &cDu bist bereits auf der letzten Seite!"
