@@ -1,10 +1,14 @@
 package coma112.csuggestion.hooks;
 
-import coma112.csuggestion.events.SuggestionCreatedEvent;
-import coma112.csuggestion.events.SuggestionForwardedEvent;
+import coma112.csuggestion.CSuggestion;
+import coma112.csuggestion.interfaces.PlaceholderProvider;
+import coma112.csuggestion.utils.SuggestionLogger;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONArray;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -14,15 +18,16 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
-import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 public class Webhook {
-    private final String url;
+    private String url;
     private final List<EmbedObject> embeds = new ArrayList<>();
     @Setter
     private String content;
@@ -41,137 +46,71 @@ public class Webhook {
         this.embeds.add(embed);
     }
 
-    public static void sendWebhook(@NotNull String url,
-                                   boolean isEnabled,
-                                   @NotNull String description,
-                                   @NotNull String color,
-                                   @NotNull String authorName,
-                                   @NotNull String authorURL,
-                                   @NotNull String authorIconURL,
-                                   @NotNull String footerText,
-                                   @NotNull String footerIconURL,
-                                   @NotNull String thumbnailURL,
-                                   @NotNull String title,
-                                   @NotNull String imageURL) throws IOException, NoSuchFieldException, IllegalAccessException, URISyntaxException {
+    public static void sendWebhookFromString(@NotNull String path, @NotNull PlaceholderProvider event) throws IOException, URISyntaxException {
+        ConfigurationSection section = CSuggestion.getInstance().getConfiguration().getSection(path);
 
-        if (isEnabled) {
+        if (section == null) return;
+
+        boolean isEnabled = section.getBoolean("enabled", false);
+        String url = section.getString("url");
+        String description = Optional.ofNullable(section.getString("description")).orElse("");
+        String color = Optional.ofNullable(section.getString("color")).orElse("BLACK");
+        String authorName = Optional.ofNullable(section.getString("author-name")).orElse("");
+        String authorURL = Optional.ofNullable(section.getString("author-url")).orElse("");
+        String authorIconURL = Optional.ofNullable(section.getString("author-icon")).orElse("");
+        String footerText = Optional.ofNullable(section.getString("footer-text")).orElse("");
+        String footerIconURL = Optional.ofNullable(section.getString("footer-icon")).orElse("");
+        String thumbnailURL = Optional.ofNullable(section.getString("thumbnail")).orElse("");
+        String title = Optional.ofNullable(section.getString("title")).orElse("");
+        String imageURL = Optional.ofNullable(section.getString("image")).orElse("");
+
+        description = replacePlaceholders(description, event);
+        authorName = replacePlaceholders(authorName, event);
+        authorURL = replacePlaceholders(authorURL, event);
+        authorIconURL = replacePlaceholders(authorIconURL, event);
+        footerText = replacePlaceholders(footerText, event);
+        footerIconURL = replacePlaceholders(footerIconURL, event);
+        thumbnailURL = replacePlaceholders(thumbnailURL, event);
+        title = replacePlaceholders(title, event);
+        imageURL = replacePlaceholders(imageURL, event);
+
+        if (isEnabled && url != null && !url.isEmpty()) {
             Webhook webhook = new Webhook(url);
 
-            webhook.addEmbed(new Webhook.EmbedObject()
-                    .setDescription(description)
-                    .setColor((Color) Color.class.getField(color.toUpperCase()).get(null))
-                    .setFooter(footerText, footerIconURL)
-                    .setThumbnail(thumbnailURL)
-                    .setTitle(title)
-                    .setAuthor(authorName, authorURL, authorIconURL)
-                    .setImage(imageURL)
-            );
+            try {
+                Color colorObj = (Color) Color.class.getField(color.toUpperCase()).get(null);
+                webhook.addEmbed(new Webhook.EmbedObject()
+                        .setDescription(description)
+                        .setColor(colorObj)
+                        .setFooter(footerText, footerIconURL)
+                        .setThumbnail(thumbnailURL)
+                        .setTitle(title)
+                        .setAuthor(authorName, authorURL, authorIconURL)
+                        .setImage(imageURL)
+                );
+            } catch (NoSuchFieldException | IllegalAccessException exception) {
+                SuggestionLogger.error(exception.getMessage());
+
+                webhook.addEmbed(new Webhook.EmbedObject()
+                        .setDescription(description)
+                        .setColor(Color.BLACK)
+                        .setFooter(footerText, footerIconURL)
+                        .setThumbnail(thumbnailURL)
+                        .setTitle(title)
+                        .setAuthor(authorName, authorURL, authorIconURL)
+                        .setImage(imageURL)
+                );
+            }
 
             webhook.execute();
         }
     }
 
-    public void execute() throws IOException, URISyntaxException {
-        if (this.content == null && this.embeds.isEmpty()) throw new IllegalArgumentException("Hiba történt!");
-
-        JSONObject json = new JSONObject();
-
-        json.put("content", this.content);
-        json.put("username", this.username);
-        json.put("avatar_url", this.avatarUrl);
-        json.put("tts", this.tts);
-
-        if (!this.embeds.isEmpty()) {
-            List<JSONObject> embedObjects = new ArrayList<>();
-
-            this.embeds.forEach(embed -> {
-                JSONObject jsonEmbed = new JSONObject();
-
-                jsonEmbed.put("title", embed.getTitle());
-                jsonEmbed.put("description", embed.getDescription());
-                jsonEmbed.put("url", embed.getUrl());
-
-                if (embed.getColor() != null) {
-                    Color color = embed.getColor();
-
-                    int rgb = color.getRed();
-                    rgb = (rgb << 8) + color.getGreen();
-                    rgb = (rgb << 8) + color.getBlue();
-
-                    jsonEmbed.put("color", rgb);
-                }
-
-                EmbedObject.Footer footer = embed.getFooter();
-                EmbedObject.Image image = embed.getImage();
-                EmbedObject.Thumbnail thumbnail = embed.getThumbnail();
-                EmbedObject.Author author = embed.getAuthor();
-                List<EmbedObject.Field> fields = embed.getFields();
-
-                if (footer != null) {
-                    JSONObject jsonFooter = new JSONObject();
-
-                    jsonFooter.put("text", footer.text());
-                    jsonFooter.put("icon_url", footer.iconUrl());
-                    jsonEmbed.put("footer", jsonFooter);
-                }
-
-                if (image != null) {
-                    JSONObject jsonImage = new JSONObject();
-
-                    jsonImage.put("url", image.url());
-                    jsonEmbed.put("image", jsonImage);
-                }
-
-                if (thumbnail != null) {
-                    JSONObject jsonThumbnail = new JSONObject();
-
-                    jsonThumbnail.put("url", thumbnail.url());
-                    jsonEmbed.put("thumbnail", jsonThumbnail);
-                }
-
-                if (author != null) {
-                    JSONObject jsonAuthor = new JSONObject();
-
-                    jsonAuthor.put("name", author.name());
-                    jsonAuthor.put("url", author.url());
-                    jsonAuthor.put("icon_url", author.iconUrl());
-                    jsonEmbed.put("author", jsonAuthor);
-                }
-
-                List<JSONObject> jsonFields = new ArrayList<>();
-
-                fields.forEach(field -> {
-                    JSONObject jsonField = new JSONObject();
-
-                    jsonField.put("name", field.name());
-                    jsonField.put("value", field.value());
-                    jsonField.put("inline", field.inline());
-
-                    jsonFields.add(jsonField);
-                });
-
-                jsonEmbed.put("fields", jsonFields.toArray());
-                embedObjects.add(jsonEmbed);
-            });
-
-            json.put("embeds", embedObjects.toArray());
-        }
-
-        URI uri = new URI(this.url);
-        URL url = uri.toURL();
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.addRequestProperty("Content-Type", "application/json");
-        connection.addRequestProperty("User-Agent", "Java-Webhook");
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-
-        OutputStream stream = connection.getOutputStream();
-        stream.write(json.toString().getBytes());
-        stream.flush();
-        stream.close();
-
-        connection.getInputStream().close();
-        connection.disconnect();
+    private static String replacePlaceholders(@NotNull String text, @NotNull PlaceholderProvider event) {
+        return event.getPlaceholders()
+                .entrySet()
+                .stream()
+                .reduce(text, (acc, entry) -> acc.replace(entry.getKey(), entry.getValue()), (s1, s2) -> s1);
     }
 
     @Getter
@@ -247,10 +186,113 @@ public class Webhook {
         }
     }
 
+    public void execute() throws IOException, URISyntaxException {
+        if (this.content == null && this.embeds.isEmpty()) throw new IllegalArgumentException("Error!");
+
+        JSONObject json = new JSONObject();
+
+        json.put("content", this.content);
+        json.put("username", this.username);
+        json.put("avatar_url", this.avatarUrl);
+        json.put("tts", this.tts);
+
+        if (!this.embeds.isEmpty()) {
+            List<JSONObject> embedObjects = new ArrayList<>();
+
+            this.embeds.forEach(embed -> {
+                JSONObject jsonEmbed = new JSONObject();
+
+                jsonEmbed.put("title", embed.getTitle());
+                jsonEmbed.put("description", embed.getDescription());
+                jsonEmbed.put("url", embed.getUrl());
+
+                if (embed.getColor() != null) {
+                    Color color = embed.getColor();
+                    int red = color.getRed();
+                    red = (red << 8) + color.getGreen();
+                    red = (red << 8) + color.getBlue();
+
+                    jsonEmbed.put("color", red);
+                }
+
+                EmbedObject.Footer footer = embed.getFooter();
+                EmbedObject.Image image = embed.getImage();
+                EmbedObject.Thumbnail thumbnail = embed.getThumbnail();
+                EmbedObject.Author author = embed.getAuthor();
+                List<EmbedObject.Field> fields = embed.getFields();
+
+                if (footer != null) {
+                    JSONObject jsonFooter = new JSONObject();
+
+                    jsonFooter.put("text", footer.text());
+                    jsonFooter.put("icon_url", footer.iconUrl());
+                    jsonEmbed.put("footer", jsonFooter);
+                }
+
+                if (image != null) {
+                    JSONObject jsonImage = new JSONObject();
+
+                    jsonImage.put("url", image.url());
+                    jsonEmbed.put("image", jsonImage);
+                }
+
+                if (thumbnail != null) {
+                    JSONObject jsonThumbnail = new JSONObject();
+
+                    jsonThumbnail.put("url", thumbnail.url());
+                    jsonEmbed.put("thumbnail", jsonThumbnail);
+                }
+
+                if (author != null) {
+                    JSONObject jsonAuthor = new JSONObject();
+
+                    jsonAuthor.put("name", author.name());
+                    jsonAuthor.put("url", author.url());
+                    jsonAuthor.put("icon_url", author.iconUrl());
+                    jsonEmbed.put("author", jsonAuthor);
+                }
+
+                List<JSONObject> jsonFields = new ArrayList<>();
+
+                fields.forEach(field -> {
+                    JSONObject jsonField = new JSONObject();
+
+                    jsonField.put("name", field.name());
+                    jsonField.put("value", field.value());
+                    jsonField.put("inline", field.inline());
+
+                    jsonFields.add(jsonField);
+                });
+
+                jsonEmbed.put("fields", jsonFields.toArray());
+                embedObjects.add(jsonEmbed);
+            });
+
+            json.put("embeds", embedObjects.toArray());
+        }
+
+        URI uri = new URI(this.url);
+        URL url = uri.toURL();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+
+        connection.addRequestProperty("Content-Type", "application/json");
+        connection.addRequestProperty("User-Agent", "Java-Webhook");
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+
+        OutputStream stream = connection.getOutputStream();
+
+        stream.write(json.toString().getBytes());
+        stream.flush();
+        stream.close();
+        connection.getInputStream().close();
+        connection.disconnect();
+    }
+
     private static class JSONObject {
         private final HashMap<String, Object> map = new HashMap<>();
 
-        void put(String key, Object value) {
+        void put(@NotNull String key, @Nullable Object value) {
             if (value != null) map.put(key, value);
         }
 
@@ -263,7 +305,7 @@ public class Webhook {
                     .collect(Collectors.joining(", ")) + "}";
         }
 
-        private String stringifyValue(Object value) {
+        private String stringifyValue(@Nullable Object value) {
             if (value instanceof String) return quote((String) value);
             if (value instanceof JSONArray) return quote(value.toString());
             if (value != null && value.getClass().isArray()) return arrayToString((Object[]) value);
@@ -276,31 +318,19 @@ public class Webhook {
             return "\"" + string.replace("\"", "\\\"") + "\"";
         }
 
-        private String arrayToString(Object[] array) {
+        private String arrayToString(@NotNull Object[] array) {
             return "[" + Arrays
                     .stream(array)
                     .map(element -> element instanceof String ? quote((String) element) : String.valueOf(element))
                     .collect(Collectors.joining(", ")) + "]";
         }
 
-        private String listToString(List<?> list) {
+        private String listToString(@NotNull List<?> list) {
             return "[" + list
                     .stream()
                     .map(element -> element instanceof String ? quote((String) element) : String.valueOf(element))
                     .collect(Collectors.joining(", ")) + "]";
         }
-    }
-
-    public static String replacePlaceholdersSuggestionCreated(@NotNull String text, final SuggestionCreatedEvent event) {
-        return text
-                .replace("{player}", Objects.requireNonNull(event.getPlayer().getName()))
-                .replace("{suggestion}", Objects.requireNonNull(event.getSuggestion()));
-    }
-
-    public static String replacePlaceholdersSuggestionForwarded(@NotNull String text, final SuggestionForwardedEvent event) {
-        return text
-                .replace("{player}", Objects.requireNonNull(event.getPlayer().getName()))
-                .replace("{suggestion}", Objects.requireNonNull(event.getSuggestion()));
     }
 }
 

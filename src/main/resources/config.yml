@@ -48,7 +48,7 @@ menu:
   update-tick: 2
   filler-glass: true
 
-forward-on-click: true # You can set that if you click on a suggestion then it should be forwarded to Discord.
+forward-on-click: false # You can set that if you click on a suggestion then it should be forwarded to Discord. YOU NEED TO SET TRUE AT THE WEBHOOK EVENT TOO!!!
 
 # Webhook
 # webhook.enabled -> You can enable and disable the webhook feature
@@ -56,8 +56,8 @@ forward-on-click: true # You can set that if you click on a suggestion then it s
 
 webhook:
   suggestion-created-embed:
-    enabled: true
-    url: "https://discord.com/api/webhooks/1270362542782550077/ICs4lfSa2YbjUfnflrO0VhMS6zI5u9xiKU9bvdwGWcz_3d6bk9tYrTq6v9MGfO6BHVYq"
+    enabled: false
+    url: "WEBHOOK URL HERE"
     title: "SUGGESTION CREATED"
     description: "**{player}** created a suggestion: **{suggestion}**"
     color: "RED"
@@ -69,7 +69,8 @@ webhook:
     thumbnail: ""
     image: ""
   suggestion-forwarded-embed:
-    url: "https://discord.com/api/webhooks/1270363789639946343/eR8uEler_th5FsP6-KtVLAzZEjVWMAIotX-_LPEgKvdGxh1BgkJLEW7QjJcRrh5Gp4_9"
+    enabled: false
+    url: "WEBHOOK URL HERE"
     title: "SUGGESTION FORWARDED"
     description: "**{player}** created a suggestion: **{suggestion}**"
     color: "RED"
