@@ -9,7 +9,6 @@ import coma112.csuggestion.managers.Suggestion;
 import coma112.csuggestion.utils.SuggestionLogger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

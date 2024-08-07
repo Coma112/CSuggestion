@@ -82,7 +82,9 @@ public interface IItemBuilder {
         String[] loreArray = section.getStringList("lore").toArray(new String[0]);
         int customModelData = section.getInt("custommodeldata", 0);
 
-        IntStream.range(0, loreArray.length).forEach(i -> loreArray[i] = MessageProcessor.process(loreArray[i]));
+        IntStream
+                .range(0, loreArray.length)
+                .forEach(i -> loreArray[i] = MessageProcessor.process(loreArray[i]));
 
         return IItemBuilder.create(material, amount)
                 .setName(Objects.requireNonNull(name))

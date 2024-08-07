@@ -13,8 +13,7 @@ import java.util.regex.Pattern;
 
 import static coma112.csuggestion.version.MinecraftVersion.determineVersion;
 
-@SuppressWarnings("deprecation")
-public class StartingUtils {
+public final class StartingUtils {
     private static boolean isSupported;
 
     public static void registerListenersAndCommands() {
@@ -53,8 +52,8 @@ public class StartingUtils {
                 int majorVersion = Integer.parseInt(matcher.group(1));
                 int minorVersion = Integer.parseInt(matcher.group(2));
                 int patchVersion = matcher.group(3) != null ? Integer.parseInt(matcher.group(3)) : 0;
-
                 MinecraftVersion version = determineVersion(majorVersion, minorVersion, patchVersion);
+
                 if (version == MinecraftVersion.UNKNOWN) {
                     isSupported = false;
                     return;
@@ -80,7 +79,9 @@ public class StartingUtils {
     static int getVMVersion() {
         String javaVersion = System.getProperty("java.version");
         Matcher matcher = Pattern.compile("(?:1\\.)?(\\d+)").matcher(javaVersion);
+
         if (!matcher.find()) return -1;
+
         String version = matcher.group(1);
 
         try {

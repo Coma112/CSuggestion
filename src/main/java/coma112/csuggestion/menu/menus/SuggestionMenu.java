@@ -1,6 +1,5 @@
 package coma112.csuggestion.menu.menus;
 import coma112.csuggestion.CSuggestion;
-import coma112.csuggestion.database.AbstractDatabase;
 import coma112.csuggestion.enums.keys.ConfigKeys;
 import coma112.csuggestion.enums.keys.ItemKeys;
 import coma112.csuggestion.enums.keys.MessageKeys;
@@ -139,7 +138,7 @@ public class SuggestionMenu extends PaginatedMenu implements Listener {
                     String updatedLine = line
                             .replace("{suggestion}", suggestion.suggestion());
                     updatedLore.add(updatedLine);
-                });
+                });   
 
                 meta.setLore(updatedLore);
             }

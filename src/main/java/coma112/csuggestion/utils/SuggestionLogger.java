@@ -8,8 +8,7 @@ import org.apache.logging.log4j.message.ParameterizedMessage;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-
-public class SuggestionLogger {
+public final class SuggestionLogger {
     static final Logger logger = LogManager.getLogger("CSuggestion");
 
     public static void info(@NotNull String msg, @NotNull Object... objs) {

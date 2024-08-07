@@ -1,6 +1,5 @@
 package coma112.csuggestion.config;
 
-
 import coma112.csuggestion.CSuggestion;
 import coma112.csuggestion.utils.ConfigUtils;
 
