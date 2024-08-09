@@ -1,6 +1,7 @@
 package coma112.csuggestion.utils;
 
 import coma112.csuggestion.CSuggestion;
+import coma112.csuggestion.update.UpdateChecker;
 import coma112.csuggestion.version.MinecraftVersion;
 import coma112.csuggestion.version.ServerVersionSupport;
 import coma112.csuggestion.version.VersionSupport;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 
 import static coma112.csuggestion.version.MinecraftVersion.determineVersion;
 
+@SuppressWarnings("deprecation")
 public final class StartingUtils {
     private static boolean isSupported;
 
@@ -74,6 +76,12 @@ public final class StartingUtils {
     public static void saveResourceIfNotExists(@NotNull String resourcePath) {
         if (!new File(CSuggestion.getInstance().getDataFolder(), resourcePath).exists())
             CSuggestion.getInstance().saveResource(resourcePath, false);
+    }
+
+    public static void checkUpdates() {
+        new UpdateChecker(118729).getVersion(version -> {
+            SuggestionLogger.info(CSuggestion.getInstance().getDescription().getVersion().equals(version) ? "Everything is up to date" : "You are using an outdated version! Please download the new version so that your server is always fresh! The newest version: " + version);
+        });
     }
 
     static int getVMVersion() {

@@ -19,8 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import static coma112.csuggestion.utils.StartingUtils.registerListenersAndCommands;
-import static coma112.csuggestion.utils.StartingUtils.saveResourceIfNotExists;
+import static coma112.csuggestion.utils.StartingUtils.*;
 
 public final class CSuggestion extends JavaPlugin {
 
@@ -47,6 +46,7 @@ public final class CSuggestion extends JavaPlugin {
         initializeDatabaseManager();
 
         new Metrics(this, 22909);
+        checkUpdates();
     }
 
     @Override
