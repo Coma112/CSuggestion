@@ -33,6 +33,7 @@ public final class CSuggestion extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+        scheduler = UniversalScheduler.getScheduler(this);
 
         StartingUtils.checkVersion();
     }
@@ -41,9 +42,6 @@ public final class CSuggestion extends JavaPlugin {
     public void onEnable() {
         StartingUtils.checkVM();
         saveDefaultConfig();
-
-        scheduler = UniversalScheduler.getScheduler(this);
-
         initializeComponents();
         registerListenersAndCommands();
         initializeDatabaseManager();

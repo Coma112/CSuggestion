@@ -113,6 +113,7 @@ public class SuggestionMenu extends PaginatedMenu implements Listener {
         }
 
         if (!ConfigKeys.FORWARD_ON_CLICK.getBoolean()) return;
+        if (!player.hasPermission("csuggestion.forward")) return;
 
         if (clickedIndex >= 0 && clickedIndex < getList().size()) {
             inventory.close();
@@ -127,16 +128,22 @@ public class SuggestionMenu extends PaginatedMenu implements Listener {
         if (meta != null) {
             String displayName = meta.getDisplayName()
                     .replace("{player}", suggestion.player())
-                    .replace("{id}", String.valueOf(suggestion.id()));
+                    .replace("{id}", String.valueOf(suggestion.id()))
+                    .replace("{suggestion}", suggestion.suggestion());
+
             meta.setDisplayName(displayName);
 
             List<String> lore = meta.getLore();
+
             if (lore != null) {
                 List<String> updatedLore = new ArrayList<>();
 
                 lore.forEach(line -> {
                     String updatedLine = line
-                            .replace("{suggestion}", suggestion.suggestion());
+                            .replace("{suggestion}", suggestion.suggestion())
+                            .replace("{player}", suggestion.player())
+                            .replace("{id}", String.valueOf(suggestion.id()));
+
                     updatedLore.add(updatedLine);
                 });   
 

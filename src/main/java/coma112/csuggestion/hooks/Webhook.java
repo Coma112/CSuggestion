@@ -79,6 +79,7 @@ public class Webhook {
 
             try {
                 Color colorObj = (Color) Color.class.getField(color.toUpperCase()).get(null);
+
                 webhook.addEmbed(new Webhook.EmbedObject()
                         .setDescription(description)
                         .setColor(colorObj)

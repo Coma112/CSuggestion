@@ -35,8 +35,10 @@ public final class SuggestionCreatedEvent extends Event implements PlaceholderPr
     @Override
     public Map<String, String> getPlaceholders() {
         Map<String, String> placeholders = new HashMap<>();
+
         placeholders.put("{player}", Objects.requireNonNull(Objects.requireNonNull(player).getName()));
         placeholders.put("{suggestion}", Objects.requireNonNull(suggestion));
+
         return placeholders;
     }
 }
